@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar/navbar";
-import { ThemeProvider } from "@/components/ui/theme-provider"
+import { GeistSans } from "geist/font/sans";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${GeistSans.className}`}>
         <Navbar />
         <main className="bg-slate-50">
           {children}
