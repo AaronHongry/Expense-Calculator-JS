@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-  
-
+.hover-border-avatar:hover #avatar-component {
+    border-color: #f8fafc;
+}
   
