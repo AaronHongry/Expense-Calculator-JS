@@ -2,7 +2,7 @@
 
 export default function About() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-full">
       <div className="m-10 flex flex-col items-center">
         <h1 className="text-5xl font-semibold text-slate-950">What is the Expense Calculator?</h1>
         <h2 className="my-4 mx-56 text-lg font-medium text-gray-800 indent-14">

@@ -14,6 +14,11 @@ export const Navbar: React.FC = () => {
             </Link>
           </li>
           <li>
+            <Link tabIndex={-1} href="/calculate" className="text-slate-50 hover:text-gray-300">
+              Calculate
+            </Link>
+          </li>
+          <li>
             <Link tabIndex={-1} href="/about" className="text-slate-50 hover:text-gray-300 pr-2">
               About
             </Link>
