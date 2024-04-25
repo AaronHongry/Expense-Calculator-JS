@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import React, { useState, useEffect } from "react";
 import AddItem from "@/components/addItem";
 import AddPerson from "@/components/addPerson";
+import { Input } from "@/components/ui/input";
 
 interface ExpenseProps {
   name: string;
@@ -21,7 +22,7 @@ interface ExpenseProps {
 function Expense({name, amount, people}: ExpenseProps) {
   return (
      <div className="grid grid-cols-5 gap-4 py-2 w-full">
-      <p className="text-lg text-slate-950 col-span-1 font-bold">{name}</p>
+      <p className="text-md text-slate-950 col-span-1 font-bold">{name}</p>
       <Separator orientation="vertical" className="bg-slate-300 col-span-1"/>
       <div className="col-span-1 justify-self-center">
         {people.map((person, index) => (
@@ -32,7 +33,7 @@ function Expense({name, amount, people}: ExpenseProps) {
           ))}
       </div>
       <Separator orientation="vertical" className="bg-slate-300 col-span-1 justify-self-end"/>
-      {amount > 0 ? <p className="text-lg text-slate-950 col-span-1 justify-self-end font-bold">${amount.toFixed(2)}</p> : <p className="text-lg text-slate-950 col-span-1 justify-self-end font-bold">-${(amount * -1).toFixed(2)}</p>}
+      {amount > 0 ? <p className="text-md text-slate-950 col-span-1 justify-self-end font-bold">${amount.toFixed(2)}</p> : <p className="text-md text-slate-950 col-span-1 justify-self-end font-bold">-${(amount * -1).toFixed(2)}</p>}
     </div> 
   );
 }
@@ -55,6 +56,9 @@ function People({name, amount}: PeopleProps) {
 }
 
 export default function Calculate() {
+  const [subtotal, setSubtotal] = useState(0.0);
+  const [tax, setTax] = useState(0.0);
+  const [tip, setTip] = useState(0.0);
   const [total, setTotal] = useState(0.0);
   const [expenses, setExpenses] = useState<ExpenseProps[]>([]);
   const [people, setPeople] = useState<PeopleProps[]>([]);
@@ -79,6 +83,11 @@ export default function Calculate() {
   };
 
   useEffect(() => {
+    const newSubtotal = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    setSubtotal(+newSubtotal.toFixed(2));
+    const newTotal = subtotal + +(subtotal * (tax / 100)).toFixed(2) + +((subtotal + +(subtotal * (tax / 100)).toFixed(2)) * (tip / 100)).toFixed(2);
+    setTotal(newTotal);
+
     const updatedPeople = people.map(person => {
       let totalAmount = 0.0;
       const includedExpenses = expenses.filter(expense => {
@@ -88,13 +97,10 @@ export default function Calculate() {
         totalAmount += Math.round((expense.amount / expense.people.length) * 100) / 100;
         console.log(`${person.name}: ${expense.name} ${Math.round((expense.amount / expense.people.length) * 100) / 100}`);
       });
-      return {...person, amount: totalAmount};
+      return {...person, amount: (totalAmount + +(totalAmount * (tax / 100)).toFixed(2) + +((totalAmount+ +(totalAmount * (tax / 100)).toFixed(2)) * (tip / 100)).toFixed(2))};
     });
     setPeople(updatedPeople);
-
-    const newTotal = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-    setTotal(Math.round(newTotal * 100) / 100);
-  }, [expenses]);
+  }, [expenses, subtotal, tax, tip]);
 
   return (
     <div className="bg-background flex flex-col min-h-full p-6 ">
@@ -121,6 +127,36 @@ export default function Calculate() {
           </CardContent>
 
           <CardContent>
+            <Separator className="bg-slate-300"/>
+            <div className="flex flex-row justify-between items-center py-2 h-14">
+              <p className="font-bold text-md text-slate-950">Subtotal</p>
+              <p className="font-extrabold text-md text-slate-950">${subtotal.toFixed(2)}</p>
+            </div>
+
+            <Separator className="bg-slate-300"/>
+            <div className="grid grid-cols-12 grid-flow-col items-center py-2 h-14">
+              <div className="grid grid-cols-3 grid-flow-col items-center col-span-2">
+                <p className="font-bold text-md text-slate-950 col-span-1">Tax</p>
+                <div className="flex flex-row justify-self-start items-center gap-1 col-span-2">
+                  <Input maxLength={2} onBlur={e => setTax(+e.target.value)} className="text-md px-auto w-12 rounded-xl border-slate-300"/>
+                  <p className="font-bold text-md text-slate-950">%</p>
+                </div>
+              </div>
+              <p className="font-extrabold text-md text-slate-950 col-span-10 justify-self-end">${((tax / 100) * subtotal).toFixed(2)}</p>
+            </div>
+
+            <Separator className="bg-slate-300"/>
+            <div className="grid grid-cols-12 grid-flow-col items-center py-2 h-14">
+              <div className="grid grid-cols-3 grid-flow-col items-center col-span-2">
+                <p className="font-bold text-md text-slate-950 col-span-1">Tip</p>
+                <div className="flex flex-row justify-self-start items-center gap-1 col-span-2">
+                  <Input maxLength={2} onBlur={e => setTip(+e.target.value)} className="text-md px-auto w-12 rounded-xl border-slate-300"/>
+                  <p className="font-bold text-md text-slate-950">%</p>
+                </div>
+              </div>
+              <p className="font-extrabold text-md text-slate-950 col-span-10 justify-self-end">${((tip / 100) * (subtotal + +((tax / 100) * subtotal).toFixed(2))).toFixed(2)}</p>
+            </div>
+
             <Separator className="bg-slate-300"/>
             <div className="flex flex-row justify-between items-center py-2">
               <p className="font-bold text-xl text-slate-950">Total</p>
