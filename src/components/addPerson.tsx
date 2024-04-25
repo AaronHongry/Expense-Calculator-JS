@@ -46,7 +46,7 @@ const AddPerson: React.FC<addPersonProps> = ({ isOpen, onConfirm, onCancel }) =>
                                     </div>
                                 </div>
                                 <div className="flex pt-10 gap-2">
-                                    <button onClick={onCancel} className="w-1/4 px-4 py-2 bg-gray-300 rounded hover:bg-gray-200 focus:outline-none">
+                                    <button type="button" onClick={onCancel} className="w-1/4 px-4 py-2 bg-gray-300 rounded hover:bg-gray-200 focus:outline-none">
                                         <CornerDownLeft className="text-gray-500"/>
                                     </button>
                                     <button type="submit" className="w-3/4 px-4 py-2 bg-green-600 text-slate-50 rounded hover:bg-green-500 transition ease-out duration-200">
